@@ -8,7 +8,9 @@ m = problem.system.m;
 
 % Dette er nok feil
 % Du må legge den G under, se original koden 
-c = blkdiag(kron(eye(N), problem.constraints.C), problem.constraints.G);
+c1 = blkdiag(kron(eye(N), problem.constraints.C));
+c2 = [zeros(size(problem.constraints.G,1) , n * (N-1)) problem.constraints.G ];
+c = [c1; c2];
 d = [kron(problem.constraints.D, eye(N)); zeros(size(problem.constraints.G,1) , m * N) ];
 a = [c d];
 

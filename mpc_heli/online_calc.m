@@ -4,7 +4,7 @@ n = problem.system.n;
 m = problem.system.m;
 N = problem.system.N;
 
-options = optimset('Display', 'on');
+options = optimset('Display', 'off');
 % get optimal decision variable and optimal value
 [output, ~] = quadprog(problem.mpc_cost.H, ... 
                                     problem.mpc_cost.f, ...
@@ -24,7 +24,7 @@ z(:,1) = output(1:n);
 
 for i=1:N
     z(:,i+1) = output(i*n + 1: (i+1)*n);
-    v(:,i) = output((N+1)*n + (i-1)*m + 1:(N+1)*n + i*m);
+    v(:,i) = output((N)*n + (i-1)*m + 1:(N)*n + i*m);
 end
 
 optimal.z = z;
