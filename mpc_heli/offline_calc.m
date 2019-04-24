@@ -12,8 +12,8 @@ system.K = -K;
 system.A_K = system.A + system.B * system.K;
 constraints.C_K = constraints.C + constraints.D * system.K;
 
-[constraints, system.S_K, system.N, system.N_2, system.X_2] = tightened_constraints(constraints, system, disturbance);
-
+calc_constraints = tightened_constraints(constraints, system, disturbance);
+system.N = 15;
 [Sx, Su] = genMPCprob(system.A,system.B,system.N);
 system.Sx = Sx;
 system.Su = Su;
@@ -21,14 +21,14 @@ system.Su = Su;
 %constraints.e = t_constraints.e;
 
 %terminal constraint set 
-constraints.G = t_constraints.G;
-constraints.h = t_constraints.h;
+constraints.G = calc_constraints.G;
+constraints.h = calc_constraints.h;
 
 %sets
-X_c = c_tube(system,constraints);
-for i=1:system.N+1
-    X(i) = X_c(i) + system.S_K;
-end    
+%X_c = c_tube(system,constraints);
+%for i=1:system.N+1
+%    X(i) = X_c(i) + system.S_K;
+%end    
 
 %assign to problem
 problem.system = system;

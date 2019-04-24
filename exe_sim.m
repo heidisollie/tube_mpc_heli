@@ -10,14 +10,14 @@ display("Run offline_calc");
 
 problem.system.w_sequence =  generate_disturbance(problem);
 
-system.x0 = [0; pi; 0; 0; 0.6; 0];
+system.x0 = [13; 13];
 x(:,1) = system.x0;
 
 
 
 for i = 1:system.Nsim
     % Return optimal x and u for horizon
-    optimal(i) = online_calc(problem, x(:,i));
+    optimal(i) = online_calc_osqp(problem, x(:,i));
     % Apply first value
     v(:,i) = optimal(i).v(:,1);
     z(:,i) = optimal(i).z(:,1);

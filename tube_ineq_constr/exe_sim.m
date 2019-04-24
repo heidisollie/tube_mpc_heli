@@ -1,21 +1,23 @@
 % close all;
 
-alpha_value = 0.15;
-init01_test;
-data_heli;
+alpha_val = 0.85;
+init;
+data_old;
+% load('SKseq.mat')
 offline_calc;
+%%
 
-problem.system.w_sequence =  generate_disturbance(problem);
+problem.system.w_sequence = generate_disturbance(problem);
 
-system.x0 = [0; pi; 0; 0; 11.5];
+system.x0 = [13; 13];
 x(:,1) = system.x0;
 
 
-
+%%
 for i = 1:system.Nsim
-    % Return optimal x and u for horizon
-    optimal(i) = online_calc_osqp(problem, x(:,i));
-    % Apply first value
+    % Return optimal u for horizon
+    optimal_input(i) = online_calc(problem, x(:,i));
+
     v(:,i) = optimal(i).v(:,1);
     z(:,i) = optimal(i).z(:,1);
     u(:,i) = v(:,i) + problem.system.K * ( x(:,i) - z(:,i));
@@ -50,9 +52,9 @@ for i=1:system.N+1
     plot(X(system.N+2-i),'Color',(1-i/(cs*(system.N+1)))*color1, 'alpha', 0.0125);
 end
 plot(X_tube,'Color', [0.3 0.2 1], 'alpha', 0.125);
-z_legend = plot(z(3,:),z(5,:), 'r.--', 'LineWidth', 1.2);
-x_legend = plot(x(3,:),x(5,:),'Color', [0.9 0.9 0.2], 'LineStyle', '--', 'LineWidth', 1.2);
-e_legend = plot(x(3,:) - z(3,:),x(5,:) - z(5,:), 'c--', 'LineWidth', 1.2);
+z_legend = plot(z(1,:),z(2,:), 'r.--', 'LineWidth', 1.2);
+x_legend = plot(x(1,:),x(2,:),'Color', [0.9 0.9 0.2], 'LineStyle', '--', 'LineWidth', 1.2);
+e_legend = plot(x(1,:) - z(1,:),x(2,:) - z(2,:), 'c--', 'LineWidth', 1.2);
 legend([z_legend,x_legend, e_legend],{'nominal state $\bar{x}$', 'system state $x$', 'error state $x - \bar{x}$'}, 'Interpreter', 'Latex')
 %legend([z_legend,x_legend],{'nominal state $\bar{x}$', 'system state $x$'}, 'Interpreter', 'Latex')
 %legend([S_K_leg e_legend],{'${S_K}_N(\alpha)$', 'error state $(x - \bar{x})$'}, 'Interpreter', 'Latex')

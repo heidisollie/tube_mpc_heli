@@ -7,22 +7,25 @@ N = problem.system.N;
 options = optimset('Display', 'on');
 % get optimal decision variable and optimal value
 [output, ~] = quadprog(problem.mpc_cost.H, ... 
-                                    x' * problem.mpc_cost.f, ...
+                                    problem.mpc_cost.f, ...
                                     problem.mpc_constraints.Ain, ...
                                     problem.mpc_constraints.bin + problem.mpc_constraints.cin * x, ...
-                                    [], ... % equality constraints now inequality
-                                    [], ... % equality constraints now inequality
+                                    problem.mpc_constraints.Aeq, ...
+                                    [problem.system.A * x; zeros((N-1)*n, 1)], ...
                                     [], [], [], ...
                                     options);
 
-% calculate output to obtain optimal x
-% x = Su u + Sx x
+% devectorize output to obtain optimal x
+% and optimal u
 
 z = zeros(n,N);
 v = zeros(m,N);
+z(:,1) = output(1:n);
 
-z = problem.system.Su * output + problem.system.Sx * x;
-v = output;
+for i=1:N
+    z(:,i+1) = output(i*n + 1: (i+1)*n);
+    v(:,i) = output((N+1)*n + (i-1)*m + 1:(N+1)*n + i*m);
+end
 
 optimal.z = z;
 optimal.v = v;
