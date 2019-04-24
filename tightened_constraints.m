@@ -2,11 +2,18 @@ function [t_constraints, S_K, N, N_2, S_K_seq] = tightened_constraints(constrain
 
 i=1;
 disturbance_set=Polyhedron(disturbance.E,disturbance.g);
-S_K_seq(i) = disturbance_set;
+S_K_seq(i) = system.E * disturbance_set;
 
-while and(not(system.A_K^i * disturbance_set <= system.alpha * disturbance_set), i <= system.Nsim)
+
+while and(not(system.A_K^i * system.E * disturbance_set <= system.alpha * system.E * disturbance_set), i <= system.Nsim)
     i = i + 1;
+    display("Beginning calculation")
     S_K_seq(i) = system.A_K * S_K_seq(i-1) + system.E * disturbance_set;
+    display("Calculation complete")
+    display(i)
+end
+if i == system.Nsim + 1
+    display("Did not terminate correctly")
 end
 N = i;
 S_K = (1 - system.alpha)^(-1) * S_K_seq(N);
